@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http.Headers;
 using IncreaseApp.Services.Database;
 using IncreaseApp.Services.Repositories.Implementations;
 using IncreaseApp.Services.Repositories.Interfaces;
@@ -27,6 +28,12 @@ namespace IncreaseApp
             services.AddDbContext<IncreaseDbContext>(options =>
             {
                 options.UseSqlServer(_configuration.GetConnectionString("local-brian"));
+            });
+            
+            services.AddHttpClient("IncreaseAPI", client =>
+            {
+                client.BaseAddress = new Uri("https://increase-transactions.herokuapp.com/");
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer 1234567890qwertyuiopasdfghjklzxcvbnm");
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
