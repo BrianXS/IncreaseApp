@@ -4,12 +4,16 @@ namespace IncreaseApp.ViewModels.Incoming
 {
     public class FileVM
     {
+        public FileVM()
+        {
+            Transactions = new List<TransactionVM>();
+        }
         public List<TransactionVM> Transactions { get; set; }
         
     }
-
-    //TODO: File Structure
-    //TODO: Split and Map Each row
+    
+    //TODO: Map Each row (properly with data typechecks to avoid failures)
     //TODO: Create rules for storing each row on the bd 
-    //TODO: I.E Verify whether the customer already exists, verify whether the  transaction already exists
+    //TODO: Verify whether the customer already exists
+    //TODO: Verify whether the transaction and any of its sub entities already exists
 }

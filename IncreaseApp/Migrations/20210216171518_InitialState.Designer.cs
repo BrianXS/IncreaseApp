@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IncreaseApp.Migrations
 {
     [DbContext(typeof(IncreaseDbContext))]
-    [Migration("20210215053313_InitialState")]
+    [Migration("20210216171518_InitialState")]
     partial class InitialState
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,18 +65,18 @@ namespace IncreaseApp.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DiscountDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("DiscountType")
                         .HasColumnType("int");
 
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TransactionId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("TransactionId1");
 
                     b.ToTable("Discounts");
                 });
@@ -87,41 +87,78 @@ namespace IncreaseApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,4)");
+                    b.Property<int>("Currency")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("CustomerId1")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("TotalAmountWithDiscounts")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("TotalDiscounts")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId1");
+
+                    b.ToTable("Transaction");
+                });
+
+            modelBuilder.Entity("IncreaseApp.Entities.TransactionDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TransactionId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("TransactionId1");
 
                     b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("IncreaseApp.Entities.Discount", b =>
                 {
-                    b.HasOne("IncreaseApp.Entities.Customer", "Customer")
+                    b.HasOne("IncreaseApp.Entities.Transaction", "Transaction")
                         .WithMany("Discounts")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TransactionId1");
                 });
 
             modelBuilder.Entity("IncreaseApp.Entities.Transaction", b =>
                 {
                     b.HasOne("IncreaseApp.Entities.Customer", "Customer")
                         .WithMany("Transactions")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId1");
+                });
+
+            modelBuilder.Entity("IncreaseApp.Entities.TransactionDetail", b =>
+                {
+                    b.HasOne("IncreaseApp.Entities.Transaction", "Transaction")
+                        .WithMany("Details")
+                        .HasForeignKey("TransactionId1");
                 });
 #pragma warning restore 612, 618
         }

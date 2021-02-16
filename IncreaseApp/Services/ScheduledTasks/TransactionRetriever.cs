@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using IncreaseApp.Services.Repositories.Interfaces;
 using IncreaseApp.Util;
+using IncreaseApp.ViewModels.Incoming;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -26,19 +29,39 @@ namespace IncreaseApp.Services.ScheduledTasks
             while (!stoppingToken.IsCancellationRequested)
             {
                 var httpClient = _httpClientFactory.CreateClient("IncreaseAPI");
-                var results = TransactionUtility
-                    .TransactionBatchSplitter(await httpClient.GetStringAsync("/file.txt"));
+                FileVM fileVm = null;
+
+                while (fileVm == null)
+                {
+                    try
+                    {
+                        fileVm = TransactionUtility
+                            .TransactionBatchSplitter(await httpClient.GetStringAsync("/file.txt"));
+                    }
+                    catch (Exception e) { }
+                }
+                
+                FileToBD(fileVm);
                 
                 await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
             }
         }
+
+        protected void FileToBD(FileVM fileVm)
+        {
+            SaveUsersThatDontExist(fileVm.Transactions.Select(x => x.Footer.CustomerId).ToList());
+        }
+        
+        protected void SaveUsersThatDontExist(List<Guid> userIds)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+                foreach (var userId in userIds)
+                {
+                    repository.SearchAndCreateUser(userId);
+                }
+            }
+        }
     }
 }
-
-/*
- * using (var scope = _serviceProvider.CreateScope())
-    {
-        var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
-        repository.CreateRandomCustomer();
-    }
-*/

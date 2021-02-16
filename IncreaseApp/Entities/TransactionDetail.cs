@@ -5,13 +5,13 @@ using IncreaseApp.Enums;
 
 namespace IncreaseApp.Entities
 {
-    public class Discount
+    public class TransactionDetail
     {
         public Guid Id { get; set; }
-
+        
         [Column(TypeName = "decimal(18,4)")]
         public decimal Amount { get; set; }
-        public DiscountType DiscountType { get; set; }
+        public Status Status { get; set; }
 
         public int TransactionId { get; set; }
         public Transaction Transaction { get; set; }

@@ -19,6 +19,5 @@ namespace IncreaseApp.Entities
         public string Phone { get; set; }
 
         public List<Transaction> Transactions { get; set; }
-        public List<Discount> Discounts { get; set; }
     }
 }

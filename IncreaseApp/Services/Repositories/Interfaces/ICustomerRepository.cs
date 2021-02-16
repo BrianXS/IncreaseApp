@@ -8,6 +8,7 @@ namespace IncreaseApp.Services.Repositories.Interfaces
     public interface ICustomerRepository : IDisposable
     {
         CustomerDataVM FindCustomerById(Guid id);
-        void CreateRandomCustomer();
+        bool DoesCustomerExist(Guid id);
+        void SearchAndCreateUser(Guid id);
     }
 }

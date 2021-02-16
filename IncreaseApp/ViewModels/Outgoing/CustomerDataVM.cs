@@ -22,6 +22,6 @@ namespace IncreaseApp.ViewModels.Outgoing
         public string MoneyToBeCharged { get; set; }
         public string MoneyThatWasCharged { get; set; }
 
-        public List<Transaction> Transactions { get; set; }
+        public List<TransactionDetail> Transactions { get; set; }
     }
 }
