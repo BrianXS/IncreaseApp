@@ -24,5 +24,3 @@ namespace IncreaseApp.ViewModels.Incoming
         }
     }
 }
-
-//1 135615f850b04e40add09be3dcee0180   001 0000204692994 0000002807866 0000201885128

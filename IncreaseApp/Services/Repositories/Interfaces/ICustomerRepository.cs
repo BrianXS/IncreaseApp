@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using IncreaseApp.Entities;
 using IncreaseApp.ViewModels;
 using IncreaseApp.ViewModels.Outgoing;
@@ -9,6 +10,6 @@ namespace IncreaseApp.Services.Repositories.Interfaces
     {
         CustomerDataVM FindCustomerById(Guid id);
         bool DoesCustomerExist(Guid id);
-        void SearchAndCreateUser(Guid id);
+        Task SearchAndCreateUser(Guid id);
     }
 }

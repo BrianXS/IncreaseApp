@@ -11,9 +11,4 @@ namespace IncreaseApp.ViewModels.Incoming
         public List<TransactionVM> Transactions { get; set; }
         
     }
-    
-    //TODO: Map Each row (properly with data typechecks to avoid failures)
-    //TODO: Create rules for storing each row on the bd 
-    //TODO: Verify whether the customer already exists
-    //TODO: Verify whether the transaction and any of its sub entities already exists
 }

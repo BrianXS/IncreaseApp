@@ -2,11 +2,13 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
 using AutoMapper;
 using IncreaseApp.Entities;
 using IncreaseApp.Services.Database;
 using IncreaseApp.Services.Repositories.Interfaces;
 using IncreaseApp.ViewModels;
+using IncreaseApp.ViewModels.Incoming;
 using IncreaseApp.ViewModels.Outgoing;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,26 +43,27 @@ namespace IncreaseApp.Services.Repositories.Implementations
             return _dbContext.Customers.Any(x => x.Id == id);
         }
 
-        public async void SearchAndCreateUser(Guid id)
+        public async Task SearchAndCreateUser(Guid id)
         {
             if (!DoesCustomerExist(id))
             {
                 var httpClient = _httpClientFactory.CreateClient("IncreaseAPI");
-                var success = false;
-                var plainUser = "";
+                string plainUser = null;
 
-                while (!success)
+                while (plainUser == null)
                 {
                     try
                     {
                         plainUser = await httpClient.GetStringAsync($"/clients/{id:N}");
-                        if (!string.IsNullOrEmpty(plainUser.Trim())) success = true;
-                    }
-                    catch (Exception e) { }
+                    } finally{ }
                 }
                 
-                var customer = JsonSerializer.Deserialize<Customer>(plainUser, new JsonSerializerOptions());
-                await _dbContext.Customers.AddAsync(customer);
+                var customer = JsonSerializer.Deserialize<CustomerVM>(plainUser.Replace("-", ""), new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+                
+                await _dbContext.Customers.AddAsync(_mapper.Map<Customer>(customer));
                 await _dbContext.SaveChangesAsync();
             }
         }

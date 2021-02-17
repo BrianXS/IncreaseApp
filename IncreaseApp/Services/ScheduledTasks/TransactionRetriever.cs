@@ -37,29 +37,28 @@ namespace IncreaseApp.Services.ScheduledTasks
                     {
                         fileVm = TransactionUtility
                             .TransactionBatchSplitter(await httpClient.GetStringAsync("/file.txt"));
-                    }
-                    catch (Exception e) { }
+                    } finally{ }
                 }
                 
-                FileToBD(fileVm);
-                
+                await FileToBD(fileVm);
                 await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
             }
         }
 
-        protected void FileToBD(FileVM fileVm)
+        protected async Task FileToBD(FileVM fileVm)
         {
-            SaveUsersThatDontExist(fileVm.Transactions.Select(x => x.Footer.CustomerId).ToList());
+            await SaveUsersThatDontExist(fileVm.Transactions.Select(x => x.Footer.CustomerId).ToList());
+            //Todo: Store Header Details and Discounts
         }
         
-        protected void SaveUsersThatDontExist(List<Guid> userIds)
+        protected async Task SaveUsersThatDontExist(List<Guid> userIds)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
                 foreach (var userId in userIds)
                 {
-                    repository.SearchAndCreateUser(userId);
+                    await repository.SearchAndCreateUser(userId);
                 }
             }
         }
