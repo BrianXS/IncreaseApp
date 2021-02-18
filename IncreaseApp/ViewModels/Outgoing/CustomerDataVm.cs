@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using IncreaseApp.Entities;
 
 namespace IncreaseApp.ViewModels.Outgoing
 {
@@ -22,6 +21,6 @@ namespace IncreaseApp.ViewModels.Outgoing
         public string MoneyToBeCharged { get; set; }
         public string MoneyThatWasCharged { get; set; }
 
-        public List<TransactionDetail> Transactions { get; set; }
+        public List<TransactionVm> Transactions { get; set; }
     }
 }

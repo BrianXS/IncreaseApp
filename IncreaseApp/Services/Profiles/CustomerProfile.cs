@@ -15,10 +15,14 @@ namespace IncreaseApp.Services.Profiles
             CreateMap<Customer, CustomerDataVm>()
                 .ForMember(to => to.MoneyThatWasCharged,
                     from => from
-                        .MapFrom(src => src.Transactions.Sum(x => x.TotalAmountWithDiscounts).ToString("C0")))
-                .ForMember(to => to.MoneyThatWasCharged,
+                        .MapFrom(src => src.Transactions
+                                        .Where(x => DateTime.Compare(DateTime.Now, x.Date) <= 0)
+                                        .Sum(x => x.TotalAmountWithDiscounts).ToString("C0")))
+                .ForMember(to => to.MoneyToBeCharged,
                     from => from
-                        .MapFrom(src => src.Transactions.Sum(x => x.TotalAmountWithDiscounts).ToString("C0")));
+                        .MapFrom(src => src.Transactions
+                                        .Where(x => DateTime.Compare(DateTime.Now, x.Date) > 0)
+                                        .Sum(x => x.TotalAmountWithDiscounts).ToString("C0")));
 
             CreateMap<CustomerVm, Customer>()
                 .ForMember(to => to.Id, 
