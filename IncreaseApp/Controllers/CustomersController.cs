@@ -18,7 +18,7 @@ namespace IncreaseApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<CustomerDataVM> FindCustomerById(Guid id)
+        public ActionResult<CustomerDataVm> FindCustomerById(Guid id)
         {
             var customerInfo = _customerRepository.FindCustomerById(id);
 

@@ -2,7 +2,7 @@ using System;
 
 namespace IncreaseApp.ViewModels.Incoming
 {
-    public class CustomerVM
+    public class CustomerVm
     {
         public string Id { get; set; }
         public string Email { get; set; }

@@ -13,7 +13,7 @@ namespace IncreaseApp.Entities
         public decimal Amount { get; set; }
         public Status Status { get; set; }
 
-        public int TransactionId { get; set; }
+        public Guid TransactionId { get; set; }
         public Transaction Transaction { get; set; }
     }
 }

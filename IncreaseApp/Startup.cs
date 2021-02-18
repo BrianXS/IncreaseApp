@@ -1,5 +1,4 @@
 using System;
-using System.Net.Http.Headers;
 using IncreaseApp.Services.Database;
 using IncreaseApp.Services.Repositories.Implementations;
 using IncreaseApp.Services.Repositories.Interfaces;
@@ -34,6 +33,7 @@ namespace IncreaseApp
             {
                 client.BaseAddress = new Uri("https://increase-transactions.herokuapp.com/");
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer 1234567890qwertyuiopasdfghjklzxcvbnm");
+                client.Timeout = TimeSpan.FromMinutes(1);
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -42,6 +42,7 @@ namespace IncreaseApp
             services.AddControllers();
         }
         
+        //Todo: Agregar metodos que mejoren la resiliencia del programa y eviten crasheos en input adverso
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

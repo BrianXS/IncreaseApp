@@ -4,7 +4,7 @@ using IncreaseApp.Entities;
 
 namespace IncreaseApp.ViewModels.Outgoing
 {
-    public class CustomerDataVM
+    public class CustomerDataVm
     {
         public Guid Id { get; set; }
 

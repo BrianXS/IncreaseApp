@@ -12,7 +12,7 @@ namespace IncreaseApp.Services.Profiles
     {
         public CustomerProfile()
         {
-            CreateMap<Customer, CustomerDataVM>()
+            CreateMap<Customer, CustomerDataVm>()
                 .ForMember(to => to.MoneyThatWasCharged,
                     from => from
                         .MapFrom(src => src.Transactions.Sum(x => x.TotalAmountWithDiscounts).ToString("C0")))
@@ -20,7 +20,7 @@ namespace IncreaseApp.Services.Profiles
                     from => from
                         .MapFrom(src => src.Transactions.Sum(x => x.TotalAmountWithDiscounts).ToString("C0")));
 
-            CreateMap<CustomerVM, Customer>()
+            CreateMap<CustomerVm, Customer>()
                 .ForMember(to => to.Id, 
                     from => from.MapFrom(src => Guid.Parse(src.Id)));
         }

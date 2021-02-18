@@ -5,7 +5,7 @@ using IncreaseApp.Enums;
 
 namespace IncreaseApp.Entities
 {
-    public class Discount
+    public class TransactionDiscount
     {
         public Guid Id { get; set; }
 
@@ -13,7 +13,7 @@ namespace IncreaseApp.Entities
         public decimal Amount { get; set; }
         public DiscountType DiscountType { get; set; }
 
-        public int TransactionId { get; set; }
+        public Guid TransactionId { get; set; }
         public Transaction Transaction { get; set; }
     }
 }

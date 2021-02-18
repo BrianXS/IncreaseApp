@@ -10,7 +10,8 @@ namespace IncreaseApp.Services.Database
 
         public DbSet<Customer> Customers { get; set; }
         
-        public DbSet<Discount> Discounts { get; set; }
-        public DbSet<TransactionDetail> Transactions { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<TransactionDetail> Details { get; set; }
+        public DbSet<TransactionDiscount> Discounts { get; set; }
     }
 }

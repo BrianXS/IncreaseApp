@@ -29,9 +29,9 @@ namespace IncreaseApp.Services.Repositories.Implementations
             _mapper = mapper;
         }
         
-        public CustomerDataVM FindCustomerById(Guid id)
+        public CustomerDataVm FindCustomerById(Guid id)
         {
-            return _mapper.Map<CustomerDataVM>
+            return _mapper.Map<CustomerDataVm>
                 (_dbContext.Customers
                 .Include(x => x.Transactions).ThenInclude(x => x.Details)
                 .Include(x => x.Transactions).ThenInclude(x => x.Discounts)
@@ -55,10 +55,12 @@ namespace IncreaseApp.Services.Repositories.Implementations
                     try
                     {
                         plainUser = await httpClient.GetStringAsync($"/clients/{id:N}");
-                    } finally{ }
+                    } catch (Exception e) {
+                        Console.WriteLine(e.Message);
+                    }
                 }
                 
-                var customer = JsonSerializer.Deserialize<CustomerVM>(plainUser.Replace("-", ""), new JsonSerializerOptions
+                var customer = JsonSerializer.Deserialize<CustomerVm>(plainUser.Replace("-", ""), new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });

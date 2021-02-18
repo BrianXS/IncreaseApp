@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using IncreaseApp.Entities;
 using IncreaseApp.Services.Repositories.Interfaces;
 using IncreaseApp.Util;
 using IncreaseApp.ViewModels.Incoming;
@@ -29,7 +30,7 @@ namespace IncreaseApp.Services.ScheduledTasks
             while (!stoppingToken.IsCancellationRequested)
             {
                 var httpClient = _httpClientFactory.CreateClient("IncreaseAPI");
-                FileVM fileVm = null;
+                FileVm fileVm = null;
 
                 while (fileVm == null)
                 {
@@ -37,28 +38,45 @@ namespace IncreaseApp.Services.ScheduledTasks
                     {
                         fileVm = TransactionUtility
                             .TransactionBatchSplitter(await httpClient.GetStringAsync("/file.txt"));
-                    } finally{ }
+                    } catch (Exception e) {
+                        Console.WriteLine(e.Message);
+                    }
                 }
                 
-                await FileToBD(fileVm);
+                await FileToBd(fileVm);
                 await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
             }
         }
 
-        protected async Task FileToBD(FileVM fileVm)
+        private async Task FileToBd(FileVm fileVm)
         {
-            await SaveUsersThatDontExist(fileVm.Transactions.Select(x => x.Footer.CustomerId).ToList());
-            //Todo: Store Header Details and Discounts
+            await SaveTransactionsAndUsers(fileVm.Transactions);
         }
-        
-        protected async Task SaveUsersThatDontExist(List<Guid> userIds)
+
+        private async Task SaveTransactionsAndUsers(List<TransactionVm> transactions)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
-                foreach (var userId in userIds)
+                var usersRepository = scope.ServiceProvider
+                    .GetRequiredService<ICustomerRepository>();
+                
+                var transactionsRepository = scope.ServiceProvider
+                    .GetRequiredService<ITransactionRepository>();
+                
+                foreach (var transaction in transactions)
                 {
-                    await repository.SearchAndCreateUser(userId);
+                    await usersRepository.SearchAndCreateUser(transaction.Footer.CustomerId);
+                    
+                    transactionsRepository
+                        .SaveTransaction(transaction.Header, 
+                                         transaction.Footer.PaymentDate, 
+                                         transaction.Footer.CustomerId);
+
+                    transactionsRepository
+                        .SaveAllDetails(transaction.Details, transaction.Header.Id);
+                    
+                    transactionsRepository
+                        .SaveAllDiscounts(transaction.Discounts, transaction.Header.Id);
                 }
             }
         }

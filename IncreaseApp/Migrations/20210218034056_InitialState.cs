@@ -12,13 +12,13 @@ namespace IncreaseApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
+                    Firstname = table.Column<string>(nullable: true),
+                    Lastname = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     Job = table.Column<string>(nullable: true),
                     Country = table.Column<string>(nullable: true),
                     Address = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<string>(nullable: true),
+                    Zipcode = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -27,7 +27,7 @@ namespace IncreaseApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transaction",
+                name: "Transactions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -36,18 +36,37 @@ namespace IncreaseApp.Migrations
                     TotalAmount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     TotalDiscounts = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     TotalAmountWithDiscounts = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    CustomerId = table.Column<int>(nullable: false),
-                    CustomerId1 = table.Column<Guid>(nullable: true)
+                    CustomerId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transaction", x => x.Id);
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transaction_Customers_CustomerId1",
-                        column: x => x.CustomerId1,
+                        name: "FK_Transactions_Customers_CustomerId",
+                        column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Details",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Status = table.Column<int>(nullable: false),
+                    TransactionId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Details", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Details_Transactions_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "Transactions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,67 +76,45 @@ namespace IncreaseApp.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     DiscountType = table.Column<int>(nullable: false),
-                    TransactionId = table.Column<int>(nullable: false),
-                    TransactionId1 = table.Column<Guid>(nullable: true)
+                    TransactionId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Discounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Discounts_Transaction_TransactionId1",
-                        column: x => x.TransactionId1,
-                        principalTable: "Transaction",
+                        name: "FK_Discounts_Transactions_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "Transactions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Transactions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    Status = table.Column<int>(nullable: false),
-                    TransactionId = table.Column<int>(nullable: false),
-                    TransactionId1 = table.Column<Guid>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Transactions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Transactions_Transaction_TransactionId1",
-                        column: x => x.TransactionId1,
-                        principalTable: "Transaction",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Discounts_TransactionId1",
+                name: "IX_Details_TransactionId",
+                table: "Details",
+                column: "TransactionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Discounts_TransactionId",
                 table: "Discounts",
-                column: "TransactionId1");
+                column: "TransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transaction_CustomerId1",
-                table: "Transaction",
-                column: "CustomerId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_TransactionId1",
+                name: "IX_Transactions_CustomerId",
                 table: "Transactions",
-                column: "TransactionId1");
+                column: "CustomerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Details");
+
+            migrationBuilder.DropTable(
                 name: "Discounts");
 
             migrationBuilder.DropTable(
                 name: "Transactions");
-
-            migrationBuilder.DropTable(
-                name: "Transaction");
 
             migrationBuilder.DropTable(
                 name: "Customers");

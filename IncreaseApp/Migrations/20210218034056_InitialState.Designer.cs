@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IncreaseApp.Migrations
 {
     [DbContext(typeof(IncreaseDbContext))]
-    [Migration("20210216171518_InitialState")]
+    [Migration("20210218034056_InitialState")]
     partial class InitialState
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,49 +36,24 @@ namespace IncreaseApp.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("Firstname")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Job")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("Lastname")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ZipCode")
+                    b.Property<string>("Zipcode")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("IncreaseApp.Entities.Discount", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<int>("DiscountType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TransactionId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("TransactionId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TransactionId1");
-
-                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("IncreaseApp.Entities.Transaction", b =>
@@ -90,10 +65,7 @@ namespace IncreaseApp.Migrations
                     b.Property<int>("Currency")
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("CustomerId1")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
@@ -110,9 +82,9 @@ namespace IncreaseApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId1");
+                    b.HasIndex("CustomerId");
 
-                    b.ToTable("Transaction");
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("IncreaseApp.Entities.TransactionDetail", b =>
@@ -127,38 +99,63 @@ namespace IncreaseApp.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("TransactionId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("TransactionId1")
+                    b.Property<Guid>("TransactionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TransactionId1");
+                    b.HasIndex("TransactionId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Details");
                 });
 
-            modelBuilder.Entity("IncreaseApp.Entities.Discount", b =>
+            modelBuilder.Entity("IncreaseApp.Entities.TransactionDiscount", b =>
                 {
-                    b.HasOne("IncreaseApp.Entities.Transaction", "Transaction")
-                        .WithMany("Discounts")
-                        .HasForeignKey("TransactionId1");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<int>("DiscountType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TransactionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("IncreaseApp.Entities.Transaction", b =>
                 {
                     b.HasOne("IncreaseApp.Entities.Customer", "Customer")
                         .WithMany("Transactions")
-                        .HasForeignKey("CustomerId1");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IncreaseApp.Entities.TransactionDetail", b =>
                 {
                     b.HasOne("IncreaseApp.Entities.Transaction", "Transaction")
                         .WithMany("Details")
-                        .HasForeignKey("TransactionId1");
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("IncreaseApp.Entities.TransactionDiscount", b =>
+                {
+                    b.HasOne("IncreaseApp.Entities.Transaction", "Transaction")
+                        .WithMany("Discounts")
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

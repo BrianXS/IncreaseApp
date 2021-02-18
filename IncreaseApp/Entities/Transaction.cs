@@ -20,10 +20,10 @@ namespace IncreaseApp.Entities
         [Column(TypeName = "decimal(18,4)")]
         public decimal TotalAmountWithDiscounts { get; set; }
 
-        public int CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
         public Customer Customer { get; set; }
         
         public List<TransactionDetail> Details { get; set; }
-        public List<Discount> Discounts { get; set; }
+        public List<TransactionDiscount> Discounts { get; set; }
     }
 }
